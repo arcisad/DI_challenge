@@ -1,0 +1,42 @@
+%matplotlib inline
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.model_selection import train_test_split
+pd.set_option('display.max_columns', 500)
+
+y = stt['Temperature']
+X = stt.drop('Temperature', axis=1)
+X = X[['Interested', 'Happy', 'nervous', 'Strong', 'Weight', 'Height', 'worried', 'Determined']]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=0)
+X_train = X_train.reset_index(drop=True)
+X_test = X_test.reset_index(drop=True)
+y_train = y_train.reset_index(drop=True)
+y_test = y_test.reset_index(drop=True)
+
+rgs = SVR()
+rgs.fit(X_train, y_train)
+
+y_pred = rgs.predict(X_test)
+
+r2 = r2_score(y_test, y_pred)
+rmse = mean_squared_error(y_test, y_pred) ** 0.5
+print('R-squared: {0}'.format(r2))
+print('RMSE: {0}'.format(rmse))
+
+plt.figure(2, figsize=(16, 10))
+title_font = {'size': '24'}
+axis_font = {'size': '20'}
+plt.rc('xtick', labelsize=15)
+plt.rc('ytick', labelsize=15)
+plt.plot(y_test, 'o', markersize=15, label='Recorded temperature (°C)')
+plt.plot(y_pred, 'o', markersize=15, label='Predicted temperature (°C)')
+plt.xlabel('Test subjects', **axis_font)
+plt.ylabel('Temperature (°C)', **axis_font)
+plt.title('Body temperature prediction', **title_font)
+extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+plt.text(-1, 31.6, 'R-Squared: {0}\nRMSE: {1}'.format(np.round(r2, 3), np.round(rmse, 3)), fontsize=15)
+plt.legend(loc='lower right', prop={'size': 15})
